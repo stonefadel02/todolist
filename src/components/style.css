@@ -241,7 +241,7 @@ body {
 
 .todo-list li .destroy:hover,
 .todo-list li .destroy:focus {
-    color: #C18585;
+    color: white;
 }
 
 .todo-list li .destroy:after {

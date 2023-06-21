@@ -7,13 +7,13 @@
         <div class="main">
             <input type="checkbox" :class="toggle-all" v-model="allDone">
             <ul class="todo-list">
-                <li class="todo" v-for="todo in filteredTodo" :key="todo.id" :class="{completed: todo.completed}">
+                <li class="todo" v-for="todo in filteredTodo" :key="todo.id" :class="{completed: todo.completed, editing: todo === editing }">
                     <div class="view">
-                        <label>{{ todo.name }}</label>
+                        <label @dblclick="editTodo(todo)">{{ todo.name }}</label>
                         <input type="checkbox" v-model="todo.completed" :class="toggle">
                         <button class="destroy" @click.prevent="deleteTodo(todo)"></button>
                     </div>
-                    <input type="text" class="edit" v-show="todo.name">
+                    <input type="text" class="edit" v-show="todo.name" @keyup.enter="doneEdit" v-focus="todo === editing" @blur="doneEdit" @keyup.esc="cancelEdit">
                 </li>
             </ul>
         </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-   
+
     export default{
     data() {
         return{
@@ -45,7 +45,8 @@
             }],
             newTodo: "",
             filter: "all",
-            editing: null
+            editing: null,
+            oldTodo: ""
         }
     },
     methods: {
@@ -62,6 +63,17 @@
         }, 
         deleteCompleted() {
             this.todos = this.todos.filter(todo => !todo.completed )
+        },
+         editTodo(todo) {
+            this.editing = todo
+            this.oldTodo = todo.name
+        },
+         doneEdit() {
+            this.editing = null
+        },
+        cancelEdit() {
+            this.editing.name = this.oldTodo
+            this.doneEdit()
         }
     },
     computed: {
@@ -91,8 +103,15 @@
 
             return this.todos
         }
-    }
-
+    },
+    directives: {
+        focus(el, value) {
+            if(value){
+            
+                  el.focus()
+                }
+            }
+        }
     }
 </script>
 <style src="./style.css">
